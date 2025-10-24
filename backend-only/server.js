@@ -24,7 +24,11 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL, process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined].filter(Boolean)
+    ? [
+        process.env.FRONTEND_URL, 
+        process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+        'https://lost-and-found-app-new-3syb.vercel.app' // Explicitly allow your frontend
+      ].filter(Boolean)
     : 'http://localhost:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
