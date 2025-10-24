@@ -9,21 +9,36 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      localStorage.setItem('token', data.token);
-      setMessage('Login successful! Redirecting...');
-      // Redirect to dashboard after successful login
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
-    } else {
-      setMessage(data.message || 'Login failed.');
+    setMessage('Logging in...');
+    
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      console.log('Login API URL:', apiUrl);
+      
+      const res = await fetch(`${apiUrl}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      console.log('Login response status:', res.status);
+      
+      const data = await res.json();
+      console.log('Login response data:', data);
+      
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        setMessage('Login successful! Redirecting...');
+        // Redirect to dashboard after successful login
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+      } else {
+        setMessage(data.message || 'Login failed.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setMessage(`Error: ${error.message}`);
     }
   };
 

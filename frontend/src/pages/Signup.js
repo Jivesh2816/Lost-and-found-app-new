@@ -10,21 +10,36 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      localStorage.setItem('token', data.token);
-      setMessage('Account created successfully! Redirecting...');
-      // Redirect to dashboard after successful signup
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
-    } else {
-      setMessage(data.message || 'Signup failed.');
+    setMessage('Creating account...');
+    
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      console.log('Signup API URL:', apiUrl);
+      
+      const res = await fetch(`${apiUrl}/api/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+      
+      console.log('Signup response status:', res.status);
+      
+      const data = await res.json();
+      console.log('Signup response data:', data);
+      
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        setMessage('Account created successfully! Redirecting...');
+        // Redirect to dashboard after successful signup
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+      } else {
+        setMessage(data.message || 'Signup failed.');
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      setMessage(`Error: ${error.message}`);
     }
   };
 
