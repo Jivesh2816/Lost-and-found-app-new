@@ -13,7 +13,7 @@ const Signup = () => {
     setMessage('Creating account...');
     
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://lost-and-found-app-bys3wcp2g-jivesh-aroras-projects.vercel.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://lost-and-found-app-81uunykru-jivesh-aroras-projects.vercel.app';
       console.log('Signup API URL:', apiUrl);
       
       const res = await fetch(`${apiUrl}/api/auth/signup`, {
