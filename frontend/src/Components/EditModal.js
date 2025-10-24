@@ -16,7 +16,7 @@ const EditModal = ({ post, onClose, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:5000/api/post/${post._id}/edit`, {
+    const res = await fetch(`https://lost-and-found-app-bys3wcp2g-jivesh-aroras-projects.vercel.app/api/post/${post._id}/edit`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

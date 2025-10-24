@@ -25,7 +25,7 @@ const AllPosts = () => {
         page,
       }).toString();
 
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/post?${params}`);
+      const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://lost-and-found-app-bys3wcp2g-jivesh-aroras-projects.vercel.app'}/api/post?${params}`);
       if (!res.ok) throw new Error('Failed to fetch posts');
       const data = await res.json();
       setPosts(data.posts || []);

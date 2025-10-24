@@ -33,7 +33,7 @@ const CreatePost = () => {
     }
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/post`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://lost-and-found-app-bys3wcp2g-jivesh-aroras-projects.vercel.app'}/api/post`, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,

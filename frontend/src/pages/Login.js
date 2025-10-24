@@ -12,7 +12,7 @@ const Login = () => {
     setMessage('Logging in...');
     
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://lost-and-found-app-bys3wcp2g-jivesh-aroras-projects.vercel.app';
       console.log('Login API URL:', apiUrl);
       
       const res = await fetch(`${apiUrl}/api/auth/login`, {

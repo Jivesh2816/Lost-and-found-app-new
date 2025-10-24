@@ -16,7 +16,7 @@ const Dashboard = () => {
         return;
       }
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/post/user`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://lost-and-found-app-bys3wcp2g-jivesh-aroras-projects.vercel.app'}/api/post/user`, {
           headers: {
             'Authorization': 'Bearer ' + token,
           },
@@ -42,7 +42,7 @@ const Dashboard = () => {
   // Delete post handler
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/post/${id}`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://lost-and-found-app-bys3wcp2g-jivesh-aroras-projects.vercel.app'}/api/post/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
