@@ -27,6 +27,7 @@ const corsOptions = {
     ? [
         process.env.FRONTEND_URL, 
         'https://lost-and-found-app-new-3syb.vercel.app', // Your frontend URL
+        'https://lost-and-found-app-new.vercel.app', // Your backend URL (for self-referencing)
         process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined
       ].filter(Boolean)
     : 'http://localhost:3000',

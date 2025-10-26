@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://lost-and-found-app-bys3wcp2g-jivesh-aroras-projects.vercel.app';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://lost-and-found-app-new.vercel.app';
 
 export const API_ENDPOINTS = {
   AUTH: {
