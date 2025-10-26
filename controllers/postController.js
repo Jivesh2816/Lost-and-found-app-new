@@ -3,44 +3,72 @@ const multer = require('multer');
 // Create a new post
 exports.createPost = async (req, res) => {
   try {
+    console.log('📝 Creating post...');
     console.log('req.body:', req.body);
-    console.log('req.file:', req.file);
+    console.log('req.file:', req.file ? 'File present' : 'No file');
+    
     const { title, description, category, location, image, status } = req.body;
   
     // Get userId from authenticated user or request body
     const userId = req.user?.id || req.body.userId;
     let imageUrl = null;
+    
     if (req.file) {
-      // Check if using Cloudinary or memory storage
-      if (process.env.CLOUDINARY_CLOUD_NAME && req.file.path) {
-        // Cloudinary returns the full URL in req.file.path
-        imageUrl = req.file.path;
-        console.log('✅ Image uploaded to Cloudinary:', imageUrl);
-      } else {
-        // Memory storage fallback - convert to base64
+      try {
+        // Convert to base64 data URL (memory storage)
         const base64 = req.file.buffer.toString('base64');
         imageUrl = `data:${req.file.mimetype};base64,${base64}`;
-        console.log('⚠️ Image stored as base64 (temporary)');
+        console.log('✅ Image processed as base64');
+      } catch (imageError) {
+        console.error('❌ Image processing error:', imageError);
+        // Continue without image if there's an error
+        imageUrl = '';
       }
     }
+    
     const newPost = new Post({
       title,
       description,
       category,
       location,
-      image: imageUrl, // This is either a Cloudinary URL or base64 data URL
+      image: imageUrl,
       status,
       userId,
     });
 
     const savedPost = await newPost.save();
+    console.log('✅ Post created successfully:', savedPost._id);
     res.status(201).json(savedPost);
   } catch (error) {
-    console.error('Create post error:', error);
-    if (error instanceof multer.MulterError || (error.message && error.message.includes('Only images'))) {
-      return res.status(400).json({ message: error.message });
+    console.error('❌ Create post error:', error);
+    
+    // Handle specific errors
+    if (error instanceof multer.MulterError) {
+      return res.status(400).json({ 
+        message: 'File upload error: ' + error.message,
+        error: 'FILE_UPLOAD_ERROR'
+      });
     }
-    res.status(500).json({ message: 'Server error during creating post' });
+    
+    if (error.message && error.message.includes('Only images')) {
+      return res.status(400).json({ 
+        message: error.message,
+        error: 'INVALID_FILE_TYPE'
+      });
+    }
+    
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ 
+        message: 'Validation error: ' + Object.values(error.errors).map(e => e.message).join(', '),
+        error: 'VALIDATION_ERROR'
+      });
+    }
+    
+    // Generic server error
+    res.status(500).json({ 
+      message: 'Server error during creating post',
+      error: error.message || 'UNKNOWN_ERROR'
+    });
   }
 };
 

@@ -4,36 +4,9 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 let storage;
 
-// Check if Cloudinary credentials are available
-if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
-  try {
-    // Configure Cloudinary
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET
-    });
-
-    // Configure Cloudinary storage
-    storage = new CloudinaryStorage({
-      cloudinary: cloudinary,
-      params: {
-        folder: 'lost-and-found', // Folder name in Cloudinary
-        allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
-        transformation: [{ width: 1000, height: 1000, crop: 'limit' }] // Optimize images
-      }
-    });
-    console.log('✅ Cloudinary configured successfully');
-  } catch (error) {
-    console.error('❌ Cloudinary configuration failed:', error.message);
-    // Fallback to memory storage
-    storage = multer.memoryStorage();
-  }
-} else {
-  console.log('⚠️ Cloudinary credentials not found, using memory storage');
-  // Fallback to memory storage
-  storage = multer.memoryStorage();
-}
+// Always use memory storage for now to prevent crashes
+console.log('⚠️ Using memory storage (Cloudinary not configured)');
+storage = multer.memoryStorage();
 
 // File filter to allow only images
 const fileFilter = (req, file, cb) => {
