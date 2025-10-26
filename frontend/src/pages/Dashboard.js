@@ -91,7 +91,7 @@ const Dashboard = () => {
             <br />
             Location: {post.location}
             <br />
-            {post.image && <img src={`http://localhost:5000/${post.image}`} alt={post.title} width="100" />}
+            {post.image && <img src={`https://lost-and-found-app-new.vercel.app/${post.image}`} alt={post.title} width="100" />}
             <br />
             <button onClick={() => handleEdit(post)}>Edit</button>{' '}
             <button onClick={() => handleDelete(post._id)}>Delete</button>

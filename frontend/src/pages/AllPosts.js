@@ -131,7 +131,7 @@ const AllPosts = () => {
               
               {post.image && (
                 <img
-                  src={`http://localhost:5000/${post.image}`}
+                  src={`https://lost-and-found-app-new.vercel.app/${post.image}`}
                   alt={post.title}
                 />
               )}
