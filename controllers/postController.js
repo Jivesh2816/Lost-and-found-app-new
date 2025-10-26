@@ -11,7 +11,9 @@ exports.createPost = async (req, res) => {
     const userId = req.user?.id || req.body.userId;
     let imagePath = '';
     if (req.file) {
-      imagePath = req.file.path;
+      // Convert to base64 data URL for display
+      const base64 = req.file.buffer.toString('base64');
+      imagePath = `data:${req.file.mimetype};base64,${base64}`;
     }
     const newPost = new Post({
       title,
