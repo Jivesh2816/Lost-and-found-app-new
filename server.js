@@ -25,9 +25,11 @@ const PORT = process.env.PORT || 5000;
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? [
-        process.env.FRONTEND_URL, 
-        'https://lost-and-found-app-new-3syb.vercel.app', // Your frontend URL
-        'https://lost-and-found-app-new.vercel.app', // Your backend URL (for self-referencing)
+        process.env.FRONTEND_URL,
+        // Allow all Vercel preview deployments
+        /^https:\/\/lost-and-found-app-new.*\.vercel\.app$/,
+        /^https:\/\/lost-and-found-app-.*\.vercel\.app$/,
+        'https://lost-and-found-app-new.vercel.app', // Your backend URL
         process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined
       ].filter(Boolean)
     : 'http://localhost:3000',
