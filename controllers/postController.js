@@ -9,14 +9,26 @@ exports.createPost = async (req, res) => {
   
     // Get userId from authenticated user or request body
     const userId = req.user?.id || req.body.userId;
-    // Cloudinary automatically uploads and returns the URL in req.file.path
-    const imageUrl = req.file ? req.file.path : null;
+    let imageUrl = null;
+    if (req.file) {
+      // Check if using Cloudinary or memory storage
+      if (process.env.CLOUDINARY_CLOUD_NAME && req.file.path) {
+        // Cloudinary returns the full URL in req.file.path
+        imageUrl = req.file.path;
+        console.log('✅ Image uploaded to Cloudinary:', imageUrl);
+      } else {
+        // Memory storage fallback - convert to base64
+        const base64 = req.file.buffer.toString('base64');
+        imageUrl = `data:${req.file.mimetype};base64,${base64}`;
+        console.log('⚠️ Image stored as base64 (temporary)');
+      }
+    }
     const newPost = new Post({
       title,
       description,
       category,
       location,
-      image: imageUrl, // This is now a Cloudinary URL like: https://res.cloudinary.com/...
+      image: imageUrl, // This is either a Cloudinary URL or base64 data URL
       status,
       userId,
     });
