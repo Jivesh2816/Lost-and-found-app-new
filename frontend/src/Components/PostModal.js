@@ -84,7 +84,7 @@ const PostModal = ({ post, onClose }) => {
                 style={{ cursor: 'pointer' }}
               >
                 <img
-                  src={`https://lost-and-found-app-new.vercel.app/${post.image}`}
+                  src={post.image}
                   alt={post.title}
                   className={imageEnlarged ? 'enlarged-image' : 'modal-image'}
                 />
