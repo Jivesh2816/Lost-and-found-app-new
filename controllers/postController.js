@@ -9,18 +9,14 @@ exports.createPost = async (req, res) => {
   
     // Get userId from authenticated user or request body
     const userId = req.user?.id || req.body.userId;
-    let imagePath = '';
-    if (req.file) {
-      // Convert to base64 data URL for display
-      const base64 = req.file.buffer.toString('base64');
-      imagePath = `data:${req.file.mimetype};base64,${base64}`;
-    }
+    // Cloudinary automatically uploads and returns the URL in req.file.path
+    const imageUrl = req.file ? req.file.path : null;
     const newPost = new Post({
       title,
       description,
       category,
       location,
-      image: imagePath,
+      image: imageUrl, // This is now a Cloudinary URL like: https://res.cloudinary.com/...
       status,
       userId,
     });

@@ -39,7 +39,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(express.json()); // to parse JSON bodies
-app.use('/uploads', express.static('uploads'));
+// Removed: app.use('/uploads', express.static('uploads')); // No longer needed with Cloudinary
 
 // Routes
 app.use('/api/auth', authRoutes);
