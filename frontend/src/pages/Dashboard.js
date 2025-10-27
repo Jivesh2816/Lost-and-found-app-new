@@ -91,8 +91,6 @@ const Dashboard = () => {
             <br />
             Location: {post.location}
             <br />
-            {post.image && <img src={post.image} alt={post.title} width="100" />}
-            <br />
             <button onClick={() => handleEdit(post)}>Edit</button>{' '}
             <button onClick={() => handleDelete(post._id)}>Delete</button>
           </li>

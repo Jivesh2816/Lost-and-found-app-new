@@ -129,13 +129,6 @@ const AllPosts = () => {
                 <strong>📍 Location:</strong> {post.location}
               </div>
               
-              {post.image && (
-                <img
-                  src={post.image}
-                  alt={post.title}
-                />
-              )}
-              
               <div className="post-actions" style={{ 
                 display: 'flex',
                 gap: '0.5rem',

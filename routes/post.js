@@ -45,7 +45,6 @@ router.get('/user', authMiddleware, async (req, res) => {
 router.post(
     '/',
     authMiddleware,
-    upload.single('image'),
     [
       body('title').notEmpty().withMessage('Title is required'),
       body('category').notEmpty().withMessage('Category is required'),

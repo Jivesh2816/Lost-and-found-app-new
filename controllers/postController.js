@@ -5,33 +5,18 @@ exports.createPost = async (req, res) => {
   try {
     console.log('📝 Creating post...');
     console.log('req.body:', req.body);
-    console.log('req.file:', req.file ? 'File present' : 'No file');
     
-    const { title, description, category, location, image, status } = req.body;
+    const { title, description, category, location, status } = req.body;
   
     // Get userId from authenticated user or request body
     const userId = req.user?.id || req.body.userId;
-    let imageUrl = null;
-    
-    if (req.file) {
-      try {
-        // Convert to base64 data URL (memory storage)
-        const base64 = req.file.buffer.toString('base64');
-        imageUrl = `data:${req.file.mimetype};base64,${base64}`;
-        console.log('✅ Image processed as base64');
-      } catch (imageError) {
-        console.error('❌ Image processing error:', imageError);
-        // Continue without image if there's an error
-        imageUrl = '';
-      }
-    }
     
     const newPost = new Post({
       title,
       description,
       category,
       location,
-      image: imageUrl,
+      image: '', // No image functionality
       status,
       userId,
     });

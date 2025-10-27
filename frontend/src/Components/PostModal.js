@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import ContactModal from './ContactModal';
 
 const PostModal = ({ post, onClose }) => {
-  const [imageEnlarged, setImageEnlarged] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
 
   if (!post) return null;
@@ -74,28 +73,6 @@ const PostModal = ({ post, onClose }) => {
               </div>
             )}
           </div>
-
-          {post.image && (
-            <div className="image-section">
-              <h4 style={{ margin: '1rem 0 0.5rem 0', color: '#2d3748' }}>📷 Image</h4>
-              <div 
-                className="image-container"
-                onClick={() => setImageEnlarged(!imageEnlarged)}
-                style={{ cursor: 'pointer' }}
-              >
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className={imageEnlarged ? 'enlarged-image' : 'modal-image'}
-                />
-                <div className="image-overlay">
-                  <span className="enlarge-hint">
-                    {imageEnlarged ? 'Click to shrink' : 'Click to enlarge'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
 
           <div className="modal-actions">
             <button 

@@ -7,17 +7,22 @@ const CreatePost = () => {
     category: '',
     location: '',
     status: 'lost',
-    image: null,
   });
   const [message, setMessage] = useState('');
 
+  const categories = [
+    'Books',
+    'Electronics',
+    'Clothing',
+    'Accessories',
+    'Documents',
+    'Keys',
+    'Others'
+  ];
+
   const handleChange = e => {
-    const { name, value, files } = e.target;
-    if (name === 'image') {
-      setFormData(prev => ({ ...prev, image: files[0] }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async e => {
@@ -27,18 +32,15 @@ const CreatePost = () => {
       setMessage('You must be logged in to create a post.');
       return;
     }
-    const data = new FormData();
-    for (const key in formData) {
-      if (formData[key]) data.append(key, formData[key]);
-    }
-
+    
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://lost-and-found-app-new.vercel.app'}/api/post`, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
         },
-        body: data,
+        body: JSON.stringify(formData),
       });
       const result = await res.json();
       if (res.ok) {
@@ -76,14 +78,19 @@ const CreatePost = () => {
           onChange={handleChange}
           rows="4"
         />
-        <input 
-          type="text" 
+        <select 
           name="category" 
-          placeholder="📂 Category (e.g., Books, Electronics, Clothing)" 
           value={formData.category} 
           onChange={handleChange} 
-          required 
-        />
+          required
+        >
+          <option value="">📂 Select Category</option>
+          {categories.map(category => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
         <input 
           type="text" 
           name="location" 
@@ -96,18 +103,6 @@ const CreatePost = () => {
           <option value="lost">❌ Lost Item</option>
           <option value="found">✅ Found Item</option>
         </select>
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-            📷 Upload Image (Optional)
-          </label>
-          <input 
-            type="file" 
-            name="image" 
-            accept="image/*" 
-            onChange={handleChange}
-            style={{ padding: '0.5rem' }}
-          />
-        </div>
         <button type="submit" style={{ width: '100%', fontSize: '1.1rem', padding: '1rem' }}>
           🚀 Create Post
         </button>

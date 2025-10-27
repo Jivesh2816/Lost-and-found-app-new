@@ -9,6 +9,16 @@ const EditModal = ({ post, onClose, onSave }) => {
     status: post.status || 'lost',
   });
 
+  const categories = [
+    'Books',
+    'Electronics',
+    'Clothing',
+    'Accessories',
+    'Documents',
+    'Keys',
+    'Others'
+  ];
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -42,7 +52,14 @@ const EditModal = ({ post, onClose, onSave }) => {
         <form onSubmit={handleSubmit}>
           <input name="title" value={form.title} onChange={handleChange} required />
           <textarea name="description" value={form.description} onChange={handleChange} />
-          <input name="category" value={form.category} onChange={handleChange} required />
+          <select name="category" value={form.category} onChange={handleChange} required>
+            <option value="">Select Category</option>
+            {categories.map(category => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
           <input name="location" value={form.location} onChange={handleChange} required />
           <select name="status" value={form.status} onChange={handleChange}>
             <option value="lost">Lost</option>
