@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 const Post = require("../models/Post");
 const ContactRequest = require("../models/ContactRequest");
 
@@ -27,6 +28,21 @@ const FROM_ADDRESS = process.env.MAIL_FROM || process.env.EMAIL_USER;
 exports.sendContactMessage = async (req, res) => {
   try {
     console.log("📩 Contact request received:", req.body);
+
+    // Contact sending doesn't require auth, but if a token is present, block
+    // the shared guest/demo account so recruiters testing the app can't
+    // trigger real emails to real students.
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET);
+        if (decoded.guest) {
+          return res.status(403).json({ message: "Guest accounts can't send messages — create a free account to contact a poster." });
+        }
+      } catch (_) {
+        // Invalid/expired token — ignore, this endpoint doesn't require auth.
+      }
+    }
 
     const { postId, name, email, phone, message } = req.body;
     if (!postId || !name || !email || !message) {

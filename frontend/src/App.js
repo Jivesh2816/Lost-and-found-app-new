@@ -4,6 +4,7 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AllPosts from './pages/AllPosts';
+import PostDetail from './pages/PostDetail';
 import CreatePost from './pages/CreatePost';
 import Navbar from './Components/Navbar';
 
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/posts" element={<ProtectedRoute><AllPosts /></ProtectedRoute>} />
+        <Route path="/posts/:id" element={<ProtectedRoute><PostDetail /></ProtectedRoute>} />
         <Route path="/create-post" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
       </Routes>
     </Router>

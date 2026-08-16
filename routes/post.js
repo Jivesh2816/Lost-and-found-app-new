@@ -2,7 +2,7 @@ const { body, validationResult } = require('express-validator');
 const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/uploadMiddleware');
-const { createPost, getAllPosts, updatePostStatus } = require('../controllers/postController');
+const { createPost, getAllPosts, getPostById, updatePostStatus } = require('../controllers/postController');
 const authMiddleware = require('../middleware/authMiddleware');  // to protect routes
 const Post = require('../models/Post');
 const { updatePostDetails, deletePost } = require('../controllers/postController');
@@ -39,7 +39,9 @@ router.get('/user', authMiddleware, async (req, res) => {
       res.status(500).json({ message: 'Error fetching user posts' });
     }
   });
-  
+
+// Public route to get a single post by id
+router.get('/:id', getPostById);
 
 // Protected routes require authentication
 router.post(

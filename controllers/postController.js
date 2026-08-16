@@ -1,8 +1,13 @@
 const Post = require('../models/Post');
 const multer = require('multer');
 // Create a new post
+const GUEST_BLOCKED_MESSAGE = 'Guest accounts are read-only — create a free account to post, edit, or delete items.';
+
 exports.createPost = async (req, res) => {
   try {
+    if (req.user?.guest) {
+      return res.status(403).json({ message: GUEST_BLOCKED_MESSAGE });
+    }
     console.log('📝 Creating post...');
     console.log('req.body:', req.body);
     
@@ -58,6 +63,22 @@ exports.createPost = async (req, res) => {
 };
 
 
+exports.getPostById = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate('userId', 'name email');
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    res.json(post);
+  } catch (error) {
+    console.error('Get post by id error:', error);
+    if (error.name === 'CastError') {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    res.status(500).json({ message: 'Server error during fetching post' });
+  }
+};
+
 exports.getAllPosts = async (req, res) => {
   try {
     const { title, category, status, location, page = 1, limit = 10 } = req.query;
@@ -92,6 +113,9 @@ exports.getAllPosts = async (req, res) => {
 // Update post status (e.g., mark as returned)
 exports.updatePostDetails = async (req, res) => {
   try {
+    if (req.user?.guest) {
+      return res.status(403).json({ message: GUEST_BLOCKED_MESSAGE });
+    }
     const { id } = req.params;
     const { title, description, category, location, status } = req.body;
 
@@ -129,6 +153,9 @@ exports.updatePostDetails = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
   try {
+    if (req.user?.guest) {
+      return res.status(403).json({ message: GUEST_BLOCKED_MESSAGE });
+    }
     const { id } = req.params;
 
     const post = await Post.findById(id);

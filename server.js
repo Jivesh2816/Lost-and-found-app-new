@@ -3,6 +3,13 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config(); // to load .env variables
 
+// Fail fast if JWT_SECRET isn't set — signing tokens with a fallback
+// secret would let anyone forge a valid auth token.
+if (!process.env.JWT_SECRET) {
+  console.error('❌ Missing required env var JWT_SECRET. Set it in .env before starting the server.');
+  process.exit(1);
+}
+
 // Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
@@ -32,7 +39,7 @@ const corsOptions = {
         'https://lost-and-found-app-new.vercel.app', // Your backend URL
         process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined
       ].filter(Boolean)
-    : 'http://localhost:3000',
+    : /^http:\/\/localhost:\d+$/,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
