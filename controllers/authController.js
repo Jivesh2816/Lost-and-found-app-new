@@ -31,10 +31,10 @@ exports.signup = async (req, res) => {
       return res.status(400).json({ message: 'Password must be at least 8 characters' });
     }
 
-    // Allow any email domain for broader compatibility
-    // if (!email.endsWith('@uwaterloo.ca')) {
-    //   return res.status(400).json({ message: 'Email must be a @uwaterloo.ca address' });
-    // }
+    if (!email.trim().toLowerCase().endsWith('@uwaterloo.ca')) {
+      console.log('Non-uwaterloo email rejected');
+      return res.status(400).json({ message: 'Email must be a @uwaterloo.ca address' });
+    }
 
     console.log('Checking for existing user...');
     const existingUser = await User.findOne({ email });

@@ -17,6 +17,7 @@ const Signup = () => {
     if (!name.trim()) errors.name = 'Name is required';
     if (!email.trim()) errors.email = 'Email is required';
     else if (!EMAIL_RE.test(email)) errors.email = 'Enter a valid email address';
+    else if (!email.trim().toLowerCase().endsWith('@uwaterloo.ca')) errors.email = 'Must be a @uwaterloo.ca email address';
     if (!password) errors.password = 'Password is required';
     else if (password.length < 8) errors.password = 'Must be at least 8 characters';
     setFieldErrors(errors);
