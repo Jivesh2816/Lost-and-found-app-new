@@ -10,6 +10,30 @@ const EditModal = ({ post, onClose, onSave }) => {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [photo, setPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(post.image || '');
+  const [photoError, setPhotoError] = useState('');
+  const [removeImage, setRemoveImage] = useState(false);
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError('Photo must be under 5MB');
+      e.target.value = '';
+      return;
+    }
+    setPhotoError('');
+    setPhoto(file);
+    setRemoveImage(false);
+    setPhotoPreview(URL.createObjectURL(file));
+  };
+
+  const handleRemovePhoto = () => {
+    setPhoto(null);
+    setPhotoPreview('');
+    setRemoveImage(true);
+  };
 
   const categories = [
     'Books',
@@ -31,13 +55,17 @@ const EditModal = ({ post, onClose, onSave }) => {
     setSubmitting(true);
     try {
       const token = localStorage.getItem('token');
+      const body = new FormData();
+      Object.entries(form).forEach(([key, value]) => body.append(key, value));
+      if (photo) body.append('image', photo);
+      if (removeImage) body.append('removeImage', 'true');
+
       const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://lost-and-found-app-new.vercel.app'}/api/post/${post._id}/edit`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
+        body,
       });
 
       if (res.ok) {
@@ -89,6 +117,30 @@ const EditModal = ({ post, onClose, onSave }) => {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="field">
+            <label htmlFor="edit-photo">Photo</label>
+            {photoPreview ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: '0.35rem' }}>
+                <img
+                  src={photoPreview}
+                  alt="Preview"
+                  style={{ width: 90, height: 90, objectFit: 'cover', borderRadius: 12, border: '1px solid var(--color-border)' }}
+                />
+                <button
+                  type="button"
+                  onClick={handleRemovePhoto}
+                  className="secondary"
+                  style={{ padding: '9px 16px', fontSize: 13.5 }}
+                >
+                  Remove photo
+                </button>
+              </div>
+            ) : (
+              <input id="edit-photo" type="file" accept="image/png,image/jpeg,image/gif,image/webp" onChange={handlePhotoChange} />
+            )}
+            {photoError && <span className="field-error">{photoError}</span>}
           </div>
 
           <div className="field">

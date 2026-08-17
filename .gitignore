@@ -9,3 +9,5 @@ uploads/
 .idea/
 *.tmp
 *.temp
+
+.vercel

@@ -1,5 +1,6 @@
 const Post = require('../models/Post');
 const multer = require('multer');
+const { cloudinaryConfigured, uploadBufferToCloudinary } = require('../middleware/uploadMiddleware');
 // Create a new post
 const GUEST_BLOCKED_MESSAGE = 'Guest accounts are read-only — create a free account to post, edit, or delete items.';
 
@@ -8,20 +9,33 @@ exports.createPost = async (req, res) => {
     if (req.user?.guest) {
       return res.status(403).json({ message: GUEST_BLOCKED_MESSAGE });
     }
+    if (req.file && !cloudinaryConfigured) {
+      return res.status(400).json({ message: 'Photo uploads are not configured on the server yet.' });
+    }
     console.log('📝 Creating post...');
     console.log('req.body:', req.body);
-    
+
     const { title, description, category, location, status } = req.body;
-  
+
     // Get userId from authenticated user or request body
     const userId = req.user?.id || req.body.userId;
-    
+
+    let imageUrl = '';
+    if (req.file) {
+      try {
+        imageUrl = await uploadBufferToCloudinary(req.file.buffer);
+      } catch (uploadError) {
+        console.error('❌ Cloudinary upload error:', uploadError);
+        return res.status(502).json({ message: 'Failed to upload photo. Please try again.' });
+      }
+    }
+
     const newPost = new Post({
       title,
       description,
       category,
       location,
-      image: '', // No image functionality
+      image: imageUrl,
       status,
       userId,
     });
@@ -116,6 +130,9 @@ exports.updatePostDetails = async (req, res) => {
     if (req.user?.guest) {
       return res.status(403).json({ message: GUEST_BLOCKED_MESSAGE });
     }
+    if (req.file && !cloudinaryConfigured) {
+      return res.status(400).json({ message: 'Photo uploads are not configured on the server yet.' });
+    }
     const { id } = req.params;
     const { title, description, category, location, status } = req.body;
 
@@ -135,6 +152,16 @@ exports.updatePostDetails = async (req, res) => {
     if (description !== undefined) post.description = description;
     if (category !== undefined) post.category = category;
     if (location !== undefined) post.location = location;
+    if (req.file) {
+      try {
+        post.image = await uploadBufferToCloudinary(req.file.buffer);
+      } catch (uploadError) {
+        console.error('❌ Cloudinary upload error:', uploadError);
+        return res.status(502).json({ message: 'Failed to upload photo. Please try again.' });
+      }
+    } else if (req.body.removeImage === 'true') {
+      post.image = '';
+    }
     if (status !== undefined) {
       if (!['lost', 'found', 'returned'].includes(status)) {
         return res.status(400).json({ message: 'Invalid status value' });

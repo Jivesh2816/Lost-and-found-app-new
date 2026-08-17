@@ -6,6 +6,18 @@ const { createPost, getAllPosts, getPostById, updatePostStatus } = require('../c
 const authMiddleware = require('../middleware/authMiddleware');  // to protect routes
 const Post = require('../models/Post');
 const { updatePostDetails, deletePost } = require('../controllers/postController');
+
+// Wraps multer's upload.single so file errors (too large, wrong type) come
+// back as a clean JSON 400 instead of Express's default HTML error page.
+const uploadImage = (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ message: err.message || 'Image upload failed' });
+    }
+    next();
+  });
+};
+
 // Public route to get all posts
 router.get('/', getAllPosts);
 
@@ -47,6 +59,7 @@ router.get('/:id', getPostById);
 router.post(
     '/',
     authMiddleware,
+    uploadImage,
     [
       body('title').notEmpty().withMessage('Title is required'),
       body('category').notEmpty().withMessage('Category is required'),
@@ -66,6 +79,7 @@ router.post(
   router.put(
     '/:id/edit',
     authMiddleware,
+    uploadImage,
     [
         body('title').optional().notEmpty().withMessage('Title cannot be empty'),
         body('category').optional().notEmpty().withMessage('Category cannot be empty'),

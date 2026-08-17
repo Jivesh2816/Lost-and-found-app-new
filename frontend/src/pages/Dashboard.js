@@ -148,6 +148,13 @@ const Dashboard = () => {
                   key={post._id}
                   style={{ display: 'flex', alignItems: 'center', gap: 20, padding: '22px 26px', borderBottom: '1px solid var(--color-border-soft)' }}
                 >
+                  {post.image && (
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 10, flexShrink: 0 }}
+                    />
+                  )}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                       <span

@@ -16,9 +16,13 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
+// Log and keep running rather than crash the whole server — a rejection
+// from one request (e.g. a third-party SDK's internal promise, like
+// Cloudinary's uploader) shouldn't take down every other in-flight request.
+// Unlike uncaughtException, an unhandled rejection doesn't leave the process
+// in an undefined state, so it's safe to just log and continue.
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err);
-  process.exit(1);
 });
 
 const authRoutes = require('./routes/auth');

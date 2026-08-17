@@ -17,8 +17,32 @@ const CreatePost = () => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState('');
   const token = localStorage.getItem('token');
   const isGuest = !!(token && decodeToken(token)?.guest);
+
+  const handlePhotoChange = e => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setPhoto(null);
+      setPhotoPreview('');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setFieldErrors(prev => ({ ...prev, photo: 'Photo must be under 5MB' }));
+      e.target.value = '';
+      return;
+    }
+    setFieldErrors(prev => ({ ...prev, photo: undefined }));
+    setPhoto(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  };
+
+  const removePhoto = () => {
+    setPhoto(null);
+    setPhotoPreview('');
+  };
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -52,19 +76,20 @@ const CreatePost = () => {
 
     setSubmitting(true);
     try {
+      const body = new FormData();
+      body.append('title', formData.title);
+      body.append('description', formData.description);
+      body.append('category', formData.category);
+      body.append('location', location);
+      body.append('status', formData.status);
+      if (photo) body.append('image', photo);
+
       const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://lost-and-found-app-new.vercel.app'}/api/post`, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,
-          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          title: formData.title,
-          description: formData.description,
-          category: formData.category,
-          location,
-          status: formData.status,
-        }),
+        body,
       });
       const result = await res.json();
       if (res.ok) {
@@ -205,6 +230,25 @@ const CreatePost = () => {
               </select>
               {fieldErrors.building && <span className="field-error">{fieldErrors.building}</span>}
             </label>
+          </div>
+
+          <div className="field" style={{ display: 'grid', gap: 8, marginBottom: 0 }}>
+            <span style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>Photo (optional)</span>
+            {photoPreview ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <img
+                  src={photoPreview}
+                  alt="Preview"
+                  style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 12, border: '1px solid var(--color-border)' }}
+                />
+                <button type="button" onClick={removePhoto} className="secondary" style={{ padding: '9px 16px', fontSize: 13.5 }}>
+                  Remove photo
+                </button>
+              </div>
+            ) : (
+              <input id="photo" type="file" accept="image/png,image/jpeg,image/gif,image/webp" onChange={handlePhotoChange} />
+            )}
+            {fieldErrors.photo && <span className="field-error">{fieldErrors.photo}</span>}
           </div>
 
           {formData.building === 'Somewhere else' && (

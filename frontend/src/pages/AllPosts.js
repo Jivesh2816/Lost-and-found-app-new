@@ -264,6 +264,13 @@ const AllPosts = () => {
                     </span>
                     <span style={{ fontSize: 12, color: '#A2968A' }}>{timeAgo(post.createdAt)}</span>
                   </div>
+                  {post.image && (
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 12, margin: 0 }}
+                    />
+                  )}
                   <h3 style={{ fontSize: 21, lineHeight: 1.2, margin: 0, color: '#241E1A' }}>{post.title}</h3>
                   {post.description && (
                     <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.5, color: '#6B5F54' }}>{truncate(post.description)}</p>

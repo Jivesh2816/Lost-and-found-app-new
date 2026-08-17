@@ -124,6 +124,13 @@ const PostDetail = () => {
               {tag.statusLabel}
             </span>
             <h1 style={{ fontSize: 40, lineHeight: 1.1, margin: '16px 0 0' }}>{post.title}</h1>
+            {post.image && (
+              <img
+                src={post.image}
+                alt={post.title}
+                style={{ width: '100%', maxHeight: 420, objectFit: 'cover', borderRadius: 16, margin: '24px 0 0' }}
+              />
+            )}
             <p style={{ margin: '18px 0 0', fontSize: 17, lineHeight: 1.6, color: '#4A403A', maxWidth: '58ch' }}>
               {post.description}
             </p>
